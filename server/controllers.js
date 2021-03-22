@@ -33,10 +33,10 @@ const controllers = {
     });
   },
   getStyles: (req, res) => {
-    if (data === null) {
-      return res.send("sorry cant find that!");
-    }
     dbHelpers.getStyles(req, (err, data) => {
+      if (data === null) {
+        return res.send("sorry cant find that!");
+      }
       data = data.toJSON();
       let formattedData = {
         product_id: data.product_id,
@@ -50,10 +50,10 @@ const controllers = {
     });
   },
   getRelated: (req, res) => {
-    if (data === null) {
-      return res.send("sorry cant find that!");
-    }
     dbHelpers.getRelated(req, (err, data) => {
+      if (data === null) {
+        return res.send("sorry cant find that!");
+      }
       data = data.toJSON();
       if (err) {
         res.status(400).send(err);

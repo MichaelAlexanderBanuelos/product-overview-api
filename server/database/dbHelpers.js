@@ -6,7 +6,6 @@ const dbHelpers = {
       page: parseInt(req.query.page, 10) || 0,
       limit: parseInt(req.query.count, 10) || 10,
     };
-
     product.find(
       {},
       null,
