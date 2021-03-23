@@ -9,6 +9,24 @@ let stylesCsv = path.join(__dirname, "../../data/styles.csv");
 let LineByLineReader = require("line-by-line");
 let stylesStream = new LineByLineReader(stylesCsv);
 
+const onlyNumbers = (input) => {
+  return input.replace(/\D/g, "");
+};
+
+var cleanString = (str) => {
+  let result = "";
+  for (let i = 0; i < str.length; i++) {
+    if (i === 0 || i === str.length - 1) {
+      if (/[a-zA-Z]/.test(str[i])) {
+        result += str[i];
+      }
+    } else {
+      result += str[i];
+    }
+  }
+  return result;
+};
+
 mongoose.connection.on("open", function (err, conn) {
   let bulk = productInformation.collection.initializeOrderedBulkOp();
   let counter = 0;
@@ -18,13 +36,13 @@ mongoose.connection.on("open", function (err, conn) {
   });
 
   stylesStream.on("line", function (line) {
-    let row = line.split(",");
+    let row = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
     let obj = {
-      style_id: row[0],
-      name: row[2],
+      style_id: onlyNumbers(row[0]),
+      name: cleanString(row[2]),
       sale_price: row[3],
-      original_price: row[4],
-      default_style: row[5],
+      original_price: onlyNumbers(row[4]),
+      default_style: onlyNumbers(row[5]),
       photos: [],
       skus: {},
     };

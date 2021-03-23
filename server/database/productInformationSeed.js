@@ -9,6 +9,24 @@ let featuresCsv = path.join(__dirname, "../../data/features.csv");
 let LineByLineReader = require("line-by-line");
 let featuresStream = new LineByLineReader(featuresCsv);
 
+const onlyNumbers = (input) => {
+  return input.replace(/\D/g, "");
+};
+
+var cleanString = (str) => {
+  let result = "";
+  for (let i = 0; i < str.length; i++) {
+    if (i === 0 || i === str.length - 1) {
+      if (/[a-zA-Z]/.test(str[i])) {
+        result += str[i];
+      }
+    } else {
+      result += str[i];
+    }
+  }
+  return result;
+};
+
 mongoose.connection.on("open", function (err, conn) {
   let bulk = productInformation.collection.initializeOrderedBulkOp();
   let counter = 0;
@@ -18,13 +36,13 @@ mongoose.connection.on("open", function (err, conn) {
   });
 
   featuresStream.on("line", function (line) {
-    let row = line.split(",");
+    let row = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
     let featuresObj = {
-      feature: row[2],
-      value: row[3],
+      feature: cleanString(row[2]),
+      value: cleanString(row[3]),
     };
     let obj = {
-      product_id: row[1],
+      product_id: onlyNumbers(row[1]),
       features: [featuresObj],
     };
     bulk.find({ product_id: row[1] }).upsert().updateOne({
