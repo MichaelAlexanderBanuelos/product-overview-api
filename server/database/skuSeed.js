@@ -3,11 +3,12 @@ const fs = require("fs");
 const { productInformation } = require("./db.js");
 const mongoose = require("mongoose");
 const path = require("path");
+const byline = require("byline");
 
 let skusCsv = path.join(__dirname, "../../data/skus.csv");
 
-let LineByLineReader = require("line-by-line");
-let skusStream = new LineByLineReader(skusCsv);
+const reader = fs.createReadStream(skusCsv);
+stream = byline.createStream(reader);
 
 const onlyNumbers = (input) => {
   return input.replace(/\D/g, "");
@@ -31,12 +32,12 @@ mongoose.connection.on("open", function (err, conn) {
   let bulk = productInformation.collection.initializeOrderedBulkOp();
   let counter = 0;
 
-  skusStream.on("error", function (err) {
+  stream.on("error", function (err) {
     console.log(err);
   });
 
-  skusStream.on("line", function (line) {
-    let row = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+  stream.on("data", function (line) {
+    let row = line.toString("utf-8").split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
     let obj = {};
     obj.size = cleanString(row[2]);
     obj.quantity = onlyNumbers(row[3]);
@@ -50,17 +51,17 @@ mongoose.connection.on("open", function (err, conn) {
     counter++;
 
     if (counter % 1000 === 0) {
-      skusStream.pause();
+      stream.pause();
 
       bulk.execute(function (err, result) {
         if (err) throw err;
         bulk = productInformation.collection.initializeOrderedBulkOp();
-        skusStream.resume();
+        stream.resume();
       });
     }
   });
 
-  skusStream.on("end", function () {
+  stream.on("end", function () {
     console.log(counter);
     if (counter % 1000 !== 0) {
       bulk.execute(function (err, result) {

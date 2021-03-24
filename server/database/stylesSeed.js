@@ -3,11 +3,12 @@ const fs = require("fs");
 const { productInformation } = require("./db.js");
 const mongoose = require("mongoose");
 const path = require("path");
+const byline = require("byline");
 
 let stylesCsv = path.join(__dirname, "../../data/styles.csv");
 
-let LineByLineReader = require("line-by-line");
-let stylesStream = new LineByLineReader(stylesCsv);
+const reader = fs.createReadStream(stylesCsv);
+stream = byline.createStream(reader);
 
 const onlyNumbers = (input) => {
   return input.replace(/\D/g, "");
@@ -31,12 +32,12 @@ mongoose.connection.on("open", function (err, conn) {
   let bulk = productInformation.collection.initializeOrderedBulkOp();
   let counter = 0;
 
-  stylesStream.on("error", function (err) {
+  stream.on("error", function (err) {
     console.log(err);
   });
 
-  stylesStream.on("line", function (line) {
-    let row = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+  stream.on("data", function (line) {
+    let row = line.toString("utf-8").split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
     let obj = {
       style_id: onlyNumbers(row[0]),
       name: cleanString(row[2]),
@@ -52,17 +53,17 @@ mongoose.connection.on("open", function (err, conn) {
     counter++;
 
     if (counter % 1000 === 0) {
-      stylesStream.pause();
+      stream.pause();
 
       bulk.execute(function (err, result) {
         if (err) throw err;
         bulk = productInformation.collection.initializeOrderedBulkOp();
-        stylesStream.resume();
+        stream.resume();
       });
     }
   });
 
-  stylesStream.on("end", function () {
+  stream.on("end", function () {
     console.log(counter);
     if (counter % 1000 !== 0) {
       bulk.execute(function (err, result) {
