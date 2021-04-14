@@ -1,4 +1,4 @@
-# product-overview-api
+# Forever 32 Product API
 
 Forever 32 is a mock e-commerce site. For this project I was tasked with designing a backend and replacing a legacy api with a new api that could scale with large amounts of traffic.
 
