@@ -1,59 +1,72 @@
-const LineInputStream = require('line-input-stream');
-const fs = require('fs');
-const { product, productInformation } = require('./db.js');
-const mongoose = require('mongoose')
-const path = require('path');
+const LineInputStream = require("line-input-stream");
+const fs = require("fs");
+const { product, productInformation } = require("./db.js");
+const mongoose = require("mongoose");
+const path = require("path");
+const byline = require("byline");
 
-let filename = path.join(__dirname, '../../data/product.csv')
+let filename = path.join(__dirname, "../../data/product.csv");
+const reader = fs.createReadStream(filename);
+stream = byline.createStream(reader);
 
-let LineByLineReader = require('line-by-line');
-let lr = new LineByLineReader(filename);
+const onlyNumbers = (input) => {
+  return input.replace(/\D/g, "");
+};
 
+var cleanString = (str) => {
+  let result = "";
+  for (let i = 0; i < str.length; i++) {
+    if (i === 0 || i === str.length - 1) {
+      if (/[a-zA-Z]/.test(str[i])) {
+        result += str[i];
+      }
+    } else {
+      result += str[i];
+    }
+  }
+  return result;
+};
 
+mongoose.connection.on("open", function (err, conn) {
+  let bulk = product.collection.initializeOrderedBulkOp();
+  let counter = 0;
 
-mongoose.connection.on("open",function(err,conn) { 
+  stream.on("error", function (err) {
+    console.log(err);
+  });
 
-    let bulk = product.collection.initializeOrderedBulkOp();
-    let counter = 0;
+  stream.on("data", function (line) {
+    let row = line.toString("utf-8").split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    let obj = {
+      product_id: onlyNumbers(row[0]),
+      name: cleanString(row[1]),
+      slogan: cleanString(row[2]),
+      description: cleanString(row[3]),
+      category: cleanString(row[4]),
+      default_price: onlyNumbers(row[5]),
+    };
 
-    lr.on('error', function (err) {
-        console.log(err)
-    });
+    bulk.insert(obj);
+    counter++;
 
-    lr.on("line",function(line) {
-        let row = line.split(",");     
-        let obj = {
-            product_id: row[0],
-            name: row[1],
-            slogan: row[2],
-            description: row[3],
-            category: row[4],
-            default_price: row[5],
-          };             
+    if (counter % 1000 === 0) {
+      stream.pause();
 
-        bulk.insert(obj);  
-        counter++;
+      bulk.execute(function (err, result) {
+        if (err) throw err;
+        bulk = product.collection.initializeOrderedBulkOp();
+        stream.resume();
+      });
+    }
+  });
 
-        if ( counter % 1000 === 0 ) {
-            lr.pause(); 
-
-            bulk.execute(function(err,result) {
-                if (err) throw err;   
-                bulk = product.collection.initializeOrderedBulkOp();
-                lr.resume(); 
-            });
-        }
-    });
-
-    lr.on("end",function() {
-        console.log(counter)
-        if ( counter % 1000 !== 0 ) {
-            bulk.execute(function(err,result) {
-                if (err) throw err;   
-            });
-            console.log('completed writing all the documents for product!')
-        }
-    });
-
+  stream.on("end", function () {
+    console.log(counter);
+    if (counter % 1000 !== 0) {
+      bulk.execute(function (err, result) {
+        if (err) throw err;
+      });
+      console.log("completed writing all the documents for product!");
+    }
+  });
 });
-
