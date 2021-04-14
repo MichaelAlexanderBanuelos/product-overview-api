@@ -1,6 +1,17 @@
 # product-overview-api
 
-This is an api that sends back product information for a mock e-commerce site.
+Forever 32 is a mock e-commerce site. For this project I was tasked with designing a backend and replacing a legacy api with a new api that could scale with large amounts of traffic.
+
+# Achievements
+- 26ms response time on queries to a MongoDB of 30+ million records
+- below 100 ms response time at a throughput of 5k users per second
+
+# technologies
+Node
+MongoDB
+morgan
+axios
+byline
 
 # installation
 
