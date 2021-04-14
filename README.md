@@ -7,11 +7,11 @@ Forever 32 is a mock e-commerce site. For this project I was tasked with designi
 - below 100 ms response time at a throughput of 5k users per second
 
 # technologies
-Node
-MongoDB
-morgan
-axios
-byline
+- Node
+- MongoDB
+- morgan
+- axios
+- byline
 
 # installation
 
@@ -20,8 +20,14 @@ use the package manager npm to install the dependencies
 ```bash
 npm install
 ```
+# Requirements
+- Node
+- MongoDB
+- NPM
 
 # usage
+
+To run this repo you will need to install the dependencies and seed a MongoDB.
 
 ```bash
 npm run start
