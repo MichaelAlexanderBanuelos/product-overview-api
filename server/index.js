@@ -3,9 +3,10 @@ const morgan = require("morgan");
 const cors = require("cors");
 const path = require("path");
 const router = require("./router.js");
+
 const PORT = 3000;
 const newrelic = require("newrelic");
-var compression = require("compression");
+const compression = require("compression");
 
 const app = express();
 app.use(compression());

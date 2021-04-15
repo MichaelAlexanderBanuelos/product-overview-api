@@ -1,19 +1,17 @@
 const LineInputStream = require("line-input-stream");
 const fs = require("fs");
-const { product, productInformation } = require("./db.js");
 const mongoose = require("mongoose");
 const path = require("path");
 const byline = require("byline");
+const { product, productInformation } = require("./db.js");
 
-let filename = path.join(__dirname, "../../data/product.csv");
+const filename = path.join(__dirname, "../../data/product.csv");
 const reader = fs.createReadStream(filename);
-stream = byline.createStream(reader);
+const stream = byline.createStream(reader);
 
-const onlyNumbers = (input) => {
-  return input.replace(/\D/g, "");
-};
+const onlyNumbers = (input) => input.replace(/\D/g, "");
 
-var cleanString = (str) => {
+const cleanString = (str) => {
   let result = "";
   for (let i = 0; i < str.length; i++) {
     if (i === 0 || i === str.length - 1) {
@@ -27,17 +25,17 @@ var cleanString = (str) => {
   return result;
 };
 
-mongoose.connection.on("open", function (err, conn) {
+mongoose.connection.on("open", (err, conn) => {
   let bulk = product.collection.initializeOrderedBulkOp();
   let counter = 0;
 
-  stream.on("error", function (err) {
+  stream.on("error", (err) => {
     console.log(err);
   });
 
-  stream.on("data", function (line) {
-    let row = line.toString("utf-8").split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-    let obj = {
+  stream.on("data", (line) => {
+    const row = line.toString("utf-8").split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    const obj = {
       product_id: onlyNumbers(row[0]),
       name: cleanString(row[1]),
       slogan: cleanString(row[2]),
@@ -52,7 +50,7 @@ mongoose.connection.on("open", function (err, conn) {
     if (counter % 1000 === 0) {
       stream.pause();
 
-      bulk.execute(function (err, result) {
+      bulk.execute((err, result) => {
         if (err) throw err;
         bulk = product.collection.initializeOrderedBulkOp();
         stream.resume();
@@ -60,10 +58,9 @@ mongoose.connection.on("open", function (err, conn) {
     }
   });
 
-  stream.on("end", function () {
-    console.log(counter);
+  stream.on("end", () => {
     if (counter % 1000 !== 0) {
-      bulk.execute(function (err, result) {
+      bulk.execute((err, result) => {
         if (err) throw err;
       });
       console.log("completed writing all the documents for product!");

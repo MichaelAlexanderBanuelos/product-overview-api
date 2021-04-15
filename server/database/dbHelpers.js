@@ -10,7 +10,7 @@ const dbHelpers = {
       {},
       null,
       { limit: pageOptions.limit, skip: pageOptions.page },
-      function (err, data) {
+      (err, data) => {
         callback(err, data);
       }
     );

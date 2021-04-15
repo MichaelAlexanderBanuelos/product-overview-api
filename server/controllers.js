@@ -16,7 +16,7 @@ const controllers = {
         return res.send("sorry cant find that!");
       }
       data = data.toJSON();
-      let formattedData = {
+      const formattedData = {
         id: data.product_id,
         name: data.name,
         slogan: data.slogan,

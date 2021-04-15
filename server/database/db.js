@@ -5,11 +5,11 @@ mongoose.connect("mongodb://mikey:password@13.52.184.198:27017/sdc", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-mongoose.connection.on("connected", function () {
+mongoose.connection.on("connected", () => {
   console.log("Mongoose default connection open to sdc");
 });
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const essentialInfo = new Schema(
   {
@@ -63,6 +63,6 @@ const product = mongoose.model("product", essentialInfo);
 const productInformation = mongoose.model("productinformation", allInfo);
 
 module.exports = {
-  product: product,
-  productInformation: productInformation,
+  product,
+  productInformation,
 };
