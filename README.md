@@ -10,7 +10,7 @@ Forever 32 is a mock e-commerce site. For this project I was tasked with designi
 
 # Achievements
 - 26ms response time on queries to a MongoDB of 30+ million records
-- below 100 ms response time at a throughput of 10k users per second
+- 63 ms response time at a throughput of 10k users per second
 
 # Technologies
 - Node
