@@ -40,5 +40,6 @@ To run this repo you will need to install the dependencies and seed a MongoDB.
 ```bash
 npm run start
 ```
+Navigate to ```bash localhost:3000/api/reviews ``` and have fun!
 
 there are various endpoints you can hit to recieve data from api
