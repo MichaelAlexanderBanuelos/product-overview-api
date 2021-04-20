@@ -19,6 +19,11 @@ Forever 32 is a mock e-commerce site. For this project I was tasked with designi
 - Axios
 - Byline
 
+# Requirements
+- Node
+- MongoDB
+- NPM
+
 # Installation
 
 make sure you have MongoDB installed on your local machine
@@ -28,10 +33,6 @@ use the package manager npm to install the dependencies
 ```bash
 npm install
 ```
-# Requirements
-- Node
-- MongoDB
-- NPM
 
 # Usage
 
