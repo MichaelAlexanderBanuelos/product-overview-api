@@ -33,7 +33,7 @@ npm install
 - MongoDB
 - NPM
 
-# usage
+# Usage
 
 To run this repo you will need to install the dependencies and seed a MongoDB.
 
