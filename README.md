@@ -26,9 +26,9 @@ Forever 32 is a mock e-commerce site. For this project I was tasked with designi
 
 # Installation
 
-make sure you have MongoDB installed on your local machine
+Make sure you have MongoDB installed on your local machine
 
-use the package manager npm to install the dependencies
+Use the package manager npm to install the dependencies
 
 ```bash
 npm install
