@@ -15,9 +15,9 @@ Forever 32 is a mock e-commerce site. For this project I was tasked with designi
 # Technologies
 - Node
 - MongoDB
-- morgan
-- axios
-- byline
+- Morgan
+- Axios
+- Byline
 
 # Installation
 
