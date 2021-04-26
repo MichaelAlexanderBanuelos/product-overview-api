@@ -5,7 +5,7 @@ Forever 32 is a mock e-commerce site. For this project I was tasked with designi
 # Challenges
 
 - Seeding a database of over 30 million records
-- Scaling a server to handle over 5000 RPS
+- Scaling a server to handle over 10000 RPS
 - Learning new technologies such as Docker and AWS (EC2)
 
 # Achievements
